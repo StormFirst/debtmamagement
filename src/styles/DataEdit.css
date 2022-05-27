@@ -1,0 +1,22 @@
+.dataEditDiv  button{
+    width: 200px;
+    height: 30px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 600;
+}
+.dataEditDiv input{
+    border: 1px solid grey;
+    border-radius: 6px;
+    padding: 5px;
+}
+.dataEditDiv input:focus{
+    outline: none;
+}
+.dataEditDiv .update{
+    background: green;
+}
+.delete{
+    background: red;
+}

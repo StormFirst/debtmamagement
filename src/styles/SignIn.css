@@ -1,0 +1,129 @@
+@import url('http://fonts.cdnfonts.com/css/gilroy-bold');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1 {
+    @apply text-2xl;
+  }
+  h2 {
+    @apply text-xl;
+  }
+  h3 {
+    @apply text-lg;
+  }
+  
+}
+
+@layer components {
+  .btn {
+    @apply text-base font-medium rounded shadow-none p-2 inline-block active:scale-[0.94] transition-all;
+  }
+  .btn-sm{
+    @apply text-sm !important;
+  }
+  .btn-primary {
+    @apply bg-sky-500 text-white;
+  }
+
+  .btn-primary:hover {
+    @apply bg-sky-600;
+  }
+
+  .btn-danger {
+    @apply bg-red-500 text-white;
+  }
+
+  .btn-danger:hover {
+    @apply bg-red-600;
+  }
+  .btn-warning {
+    @apply bg-yellow-300 text-black;
+  }
+
+  .btn-warning:hover {
+    @apply bg-yellow-400;
+  }
+  .btn-dark {
+    @apply bg-gray-800 text-white border-[1px] border-gray-800;
+
+  }
+
+  .btn-dark:hover {
+    @apply bg-gray-900 border-[1px] border-gray-800;
+  }
+  .btn-outline-danger {
+    @apply border-[1px] border-red-500 text-red-500 !important;
+  }
+
+  .btn-outline-danger:hover {
+    @apply bg-red-500 text-white !important;
+  }
+  .btn-outline-dark {
+    @apply border-[1px] border-gray-800 text-gray-800 !important;
+  }
+
+  .btn-outline-dark:hover {
+    @apply bg-gray-800 text-white !important;
+  }
+
+
+  .input{
+    @apply text-base appearance-none p-2 rounded bg-white focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all w-full;
+  }
+  table{
+    @apply w-full;
+  }
+  th{
+    @apply text-left p-2;
+  }
+  tr{
+    @apply  border-[1px] hover:bg-gray-200 active:bg-sky-200 cursor-pointer;
+  }
+  td{
+    @apply p-2;
+    
+  }
+  .navLink{
+    @apply flex items-center px-2 py-[8px] rounded font-semibold text-gray-700 hover:text-gray-900 hover:bg-sky-200 hover:border-l-4 hover:border-sky-500 active:border-l-8 transition-all;
+  }
+  .modal{
+    @apply w-[400px] bg-gray-50 p-6 rounded shadow-xl;
+  }
+  .divList{
+    @apply flex justify-between items-center bg-gray-100 p-2 rounded border-[1px] hover:bg-gray-200 cursor-pointer;
+  }
+}
+
+*{
+    font-family: 'Gilroy-Regular', sans-serif;
+}
+
+.mainImg{
+    background-image: url(../assets/images/background.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.toggle{
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.PhoneInput input{
+  width: 100%;
+  appearance: none;
+  border-radius: 0.25rem;
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  padding: 0.5rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  background-color: rgb(38 38 38 / var(--tw-bg-opacity));
+  padding: 1rem; 
+}
