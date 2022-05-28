@@ -164,14 +164,14 @@ export default function MainData() {
 
             <div className="fixed bottom-0 bg-gray-200 left-0 px-4 py-2 w-full flex justify-between sm:hidden">
                 <div>
-                    <h4 className="text-md">Total debt (UZs): <b>{TotalLoanUzs} so`m</b></h4>
+                    <h4 className="text-md">Total debt (UZS): <b>{TotalLoanUzs} so`m</b></h4>
                     <h4 className="text-md">Total debt (USD): <b>{TotalLoanUsd} $</b></h4>
                 </div>
                 <button className="btn btn-primary w-12 h-12 text-2xl" onClick={() => setShowAddLoan(true)}>+</button>
             </div>
 
             <div className="hidden sm:block p-4 mt-[-4px] text-right">
-                <h4 className="text-xl">Total debt (UZs): <b>{TotalLoanUzs} so`m</b></h4>
+                <h4 className="text-xl">Total debt (UZS): <b>{TotalLoanUzs} so`m</b></h4>
                 <h4 className="text-xl">Total debt (USD): <b>{TotalLoanUsd} $</b></h4>
             </div>
             
