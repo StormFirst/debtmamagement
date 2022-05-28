@@ -82,7 +82,7 @@ function AddLoan() {
                         <input type="number" className="input border-[1px] appearance-none w-3/4" onChange={handleloan} required/>
                         <select className="input border w-1/4" onChange={handleCur}>
                             <option hidden selected disabled>Currency</option>
-                            <option value="UZS">EUR</option>
+                            <option value="UZS">UZS</option>
                             <option value="USD">USD</option>
                         </select>
                     </div>
