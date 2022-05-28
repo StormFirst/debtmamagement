@@ -1,11 +1,7 @@
-import { useState } from "react";
-import Loading from "../components/Loading"
-// firebase
-import { db } from '../api/firebase';
-import { collection, addDoc } from "firebase/firestore";
+
 import "../styles/Main.css"
 import MainData from "../components/MainData";
-import { auth } from "../api/firebase";
+
 import { useUserContext } from "../context/userContext";
 import logo from '../assets/images/logo.svg'
 import { Link } from "react-router-dom";
