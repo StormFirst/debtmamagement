@@ -1,4 +1,4 @@
-@import url('http://fonts.cdnfonts.com/css/gilroy-bold');
+@import url("http://fonts.cdnfonts.com/css/gilroy-bold");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,14 +13,13 @@
   h3 {
     @apply text-lg;
   }
-  
 }
 
 @layer components {
   .btn {
     @apply text-base font-medium rounded shadow-none p-2 inline-block active:scale-[0.94] transition-all;
   }
-  .btn-sm{
+  .btn-sm {
     @apply text-sm !important;
   }
   .btn-primary {
@@ -47,7 +46,6 @@
   }
   .btn-dark {
     @apply bg-gray-800 text-white border-[1px] border-gray-800;
-
   }
 
   .btn-dark:hover {
@@ -68,49 +66,36 @@
     @apply bg-gray-800 text-white !important;
   }
 
-
-  .input{
+  .input {
     @apply text-base appearance-none p-2 rounded bg-white focus:ring-2 focus:ring-sky-500 focus:outline-none transition-all w-full;
   }
-  table{
-    @apply w-full;
-  }
-  th{
-    @apply text-left p-2;
-  }
-  tr{
-    @apply  border-[1px] hover:bg-gray-200 active:bg-sky-200 cursor-pointer;
-  }
-  td{
-    @apply p-2;
-    
-  }
-  .navLink{
+
+  .navLink {
     @apply flex items-center px-2 py-[8px] rounded font-semibold text-gray-700 hover:text-gray-900 hover:bg-sky-200 hover:border-l-4 hover:border-sky-500 active:border-l-8 transition-all;
   }
-  .modal{
+  .modal {
     @apply w-[400px] bg-gray-50 p-6 rounded shadow-xl;
   }
-  .divList{
+  .divList {
     @apply flex justify-between items-center bg-gray-100 p-2 rounded border-[1px] hover:bg-gray-200 cursor-pointer;
   }
 }
 
-*{
-    font-family: 'Gilroy-Regular', sans-serif;
+* {
+  font-family: "Gilroy-Regular", sans-serif;
 }
 
-.mainImg{
-    background-image: url(../assets/images/background.png);
-    background-repeat: no-repeat;
-    background-size: cover;
+.mainImg {
+  background-image: url(../assets/images/background.png);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
-.toggle{
+.toggle {
   font-size: 18px;
   font-weight: 500;
   cursor: pointer;
 }
-.PhoneInput input{
+.PhoneInput input {
   width: 100%;
   appearance: none;
   border-radius: 0.25rem;
@@ -125,5 +110,5 @@
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   background-color: rgb(38 38 38 / var(--tw-bg-opacity));
-  padding: 1rem; 
+  padding: 1rem;
 }

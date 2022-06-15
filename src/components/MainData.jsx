@@ -1,191 +1,285 @@
-import { collection, onSnapshot, query, where} from "firebase/firestore"
-import { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router-dom";
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { db } from "../api/firebase";
-import { FiSearch, FiEdit } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 import { auth } from "../api/firebase";
 import AddLoan from "./AddLoan";
 
 export default function MainData() {
+  const [data, setData] = useState([]);
+  const [search, setSearch] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [oneDay, setOneDay] = useState("");
+  const [uzs, setUsdPlus] = useState([]);
+  const [minus, setMinus] = useState([]);
+  const [plus, setPlus] = useState([]);
+  const [usd, setUsdMinus] = useState([]);
+  const Auth = auth.currentUser.uid;
 
-    const [ data, setData ] = useState([]);
-    const [ search, setSearch ] = useState("");
-    const [ date, setDate ] = useState("")
-    const [ time, setTime ] = useState("");
-    const [ oneDay, setOneDay ] = useState("");
-    const [ uzs, setUzs ] = useState([])
-    const [ usd, setUsd ] = useState([])
-    const Auth = auth.currentUser.uid;
-    
-    const [showAddLoan, setShowAddLoan] = useState(false);
+  const [showAddLoan, setShowAddLoan] = useState(false);
 
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const handleNavigate = (item) => {
+    navigate(`/${item.id}`);
+  };
 
-    const handleNavigate = (item) => {
-        navigate(`/${item.id}`)
+  useEffect(() => {
+    const Ref = collection(db, Auth);
+    const q = query(Ref, orderBy("timestamp", "desc"));
+
+    const qs = query(
+      Ref,
+      where("status", "==", "Olindi"),
+      where("currency", "==", "UZS")
+    );
+    const qS = query(
+      Ref,
+      where("status", "==", "Berildi"),
+      where("currency", "==", "UZS")
+    );
+
+    const qd = query(
+      Ref,
+      where("status", "==", "Olindi"),
+      where("currency", "==", "USD")
+    );
+    const qD = query(
+      Ref,
+      where("status", "==", "Berildi"),
+      where("currency", "==", "USD")
+    );
+
+    const q1 = query(Ref, where("timestamp", ">=", oneDay));
+
+    onSnapshot(qs, (snapshot) =>
+      setMinus(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    );
+
+    onSnapshot(qS, (snapshot) =>
+      setPlus(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    );
+
+    onSnapshot(qd, (snapshot) =>
+      setUsdPlus(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    );
+
+    onSnapshot(qD, (snapshot) =>
+      setUsdMinus(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+    );
+
+    if (oneDay === "") {
+      onSnapshot(q, (snapshot) =>
+        setData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+      );
+    } else {
+      onSnapshot(q1, (snapshot) =>
+        setData(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+      );
     }
+  }, [date, time, oneDay]);
 
-    useEffect(() => {
+  const totlaLoanUzs = uzs.reduce((tl, item) => tl + item.loan, 0);
+  const totlaLoanUsd = usd.reduce((tl, item) => tl + item.loan, 0);
+  const totalMinus = minus.reduce((tl, item) => tl + item.loan, 0);
+  const totalPlus = plus.reduce((tl, item) => tl + item.loan, 0);
+  const numberFormat = new Intl.NumberFormat("ru-RU");
 
-        const Ref =  collection(db, (Auth));
-        const q = query(Ref, where("timestamp", ">=", (date)), where("timestamp", "<=", (time)));
-        const q1 = query(Ref, where("timestamp", ">=", (oneDay)));
-        const q2 = query(Ref, where("currency", "==", "UZS"));
-        const q3 = query(Ref, where("currency", "==", "USD"))
+  const TotalLoanUzs = numberFormat.format(totlaLoanUzs);
+  const TotalLoanUsd = numberFormat.format(totlaLoanUsd);
+  const TotalMinus = numberFormat.format(totalMinus);
+  const TotalPlus = numberFormat.format(totalPlus);
+  const filterName = (e) => {
+    setSearch(e.target.value);
+  };
 
-        onSnapshot(q2, (snapshot) => 
-            setUzs(snapshot.docs.map((doc) => ({...doc.data(), id: doc.id})))   
-        )
+  const filterOneday = (e) => {
+    const timenew = new Date(e.target.value);
+    setOneDay(timenew.getTime());
+  };
 
-        onSnapshot(q3, (snapshot) => 
-            setUsd(snapshot.docs.map((doc) => ({...doc.data(), id: doc.id})))   
-        )
+  const filterDate = (e) => {
+    const timenew = new Date(e.target.value);
+    setDate(timenew.getTime());
+  };
 
-        if (date === "") {
-            if (oneDay === "") {
-                onSnapshot(Ref, (snapshot) => 
-                    setData(snapshot.docs.map((doc) => ({...doc.data(), id: doc.id})))   
-                )
-            } else {
-                onSnapshot(q1, (snapshot) => 
-                    setData(snapshot.docs.map((doc) => ({...doc.data(), id: doc.id})))   
-                ) 
-            }
-        } else {
-            onSnapshot(q, (snapshot) => 
-                setData(snapshot.docs.map((doc) => ({...doc.data(), id: doc.id})))   
-            )
-        }
-        
-    },[date, time, oneDay, ]);
+  const filterdate = (e) => {
+    const timenew = new Date(e.target.value);
+    setTime(timenew.getTime());
+  };
 
-    
+  function addLeadingzero(d) {
+    return d < 10 ? "0" + d : d;
+  }
 
-    const totlaLoanUzs = uzs.reduce((tl, item ) => tl + item.loan, 0);
-    const totlaLoanUsd = usd.reduce((tl, item ) => tl + item.loan, 0);
-    // const options = { style: 'currency', currency: 'UZS', currencyDisplay: 'symbol', minimumFractionDigits: 0 };
-    const numberFormat = new Intl.NumberFormat('ru-RU');
+  function getUsertime(t) {
+    let Y = t.getUTCFullYear();
+    let M = addLeadingzero(t.getMonth() + 1);
+    let D = addLeadingzero(t.getDate());
+    return `${D}.${M}.${Y}`;
+  }
 
-    const TotalLoanUzs = numberFormat.format(totlaLoanUzs);
-    const TotalLoanUsd = numberFormat.format(totlaLoanUsd);
-    const filterName = (e) => {
-        setSearch(e.target.value)
-    };
+  return (
+    <div className="w-full sm:w-4/6 border p-2">
+      <div className="inputDiv flex w-full justify-between gap-2 flex-wrap sm:flex-nowrap">
+        <label className="w-full sm:w-3/4">
+          Qidiruv:
+          <div className="flex items-center border-[1px] rounded bg-white">
+            <FiSearch className="text-lg w-10" />
+            <input
+              type="text"
+              className="input"
+              onChange={filterName}
+              placeholder="Ismi bo'yicha"
+            />
+          </div>
+        </label>
 
-    const filterOneday  = (e) => {
-        const timenew = new Date(e.target.value)
-        setOneDay(timenew.getTime());
-    };
+        <label className="items-center w-full sm:w-1/4">
+          Sana:
+          <input
+            type="date"
+            className="input border-[1px]"
+            onChange={filterOneday}
+          />
+        </label>
 
-    const filterDate  = (e) => {
-        const timenew = new Date(e.target.value)
-        setDate(timenew.getTime());
-    };
+        {/* <label className="items-center w-full sm:w-1/4 hidden sm:block">
+        ZSanadan:<input type="date" className="input border-[1px]" onChange={filterDate}/>
+        </label>
+        <label className="items-center w-full sm:w-1/4 hidden sm:block">
+            Sanagacha:<input type="date" className="input border-[1px]" onChange={filterdate}/>
+        </label> */}
+      </div>
 
-    const filterdate  = (e) => {
-        const timenew = new Date(e.target.value)
-        setTime(timenew.getTime());
-    };
-
-    function addLeadingzero(d) {
-        return (d < 10) ? '0' + d : d;
-    };
-    
-    function getUsertime (t) {
-        let Y = t.getUTCFullYear();
-        let M = addLeadingzero(t.getMonth() + 1)
-        let D = addLeadingzero(t.getDate());
-        return `${D}.${M}.${Y}`
-    };
-
-    return (
-        <div className="w-full sm:w-4/6 border p-2">
-            <div className="inputDiv flex w-full justify-between gap-2 flex-wrap sm:flex-nowrap">
-                <label className="w-full sm:w-1/4">Search:
-                    <div className="flex items-center border-[1px] rounded bg-white">
-                        <FiSearch className='text-lg w-10'/>
-                        <input type="text" className="input" 
-                            onChange={filterName} 
-                        />
-                    </div>
-                </label>
-                <label className="items-center w-full sm:w-1/4">
-                    Date:<input type="date" className="input border-[1px]" onChange={filterOneday}/>
-                </label>
-                
-                {/* <label className="items-center w-full sm:w-1/4 hidden sm:block">
-                    Sanadan:<input type="date" className="input border-[1px]" onChange={filterDate}/>
-                </label>
-                <label className="items-center w-full sm:w-1/4 hidden sm:block">
-                    Sanagacha:<input type="date" className="input border-[1px]" onChange={filterdate}/>
-                </label> */}
-                
-            </div>
-
-            <div className="h-screen-300 overflow-auto">
-                <table className="mt-4">
-
-                    <thead>
-                        <tr>
-                            <th>№</th>
-                            <th>Name</th>
-                            {/* <th className="hidden sm:table-cell">Tel nomer</th> */}
-                            <th>Value</th>
-                            <th className="hidden sm:table-cell">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        {data.filter((item) => {
-                            if(search === "") {
-                                return item
-                            } else if (item.name.toLowerCase().includes(search.toLowerCase())) {
-                                return item
-                            }
-                        }).map((item, index) => {
-                            const time = !getUsertime(new Date(item.returnTime)) ? "" : getUsertime(new Date(item.returnTime))
-                            return (
-                                <tr key={item.id} onClick={() => handleNavigate(item)}>
-                                    <td>{index + 1}</td>
-                                    <td>{item.name}</td>
-                                    {/* <td className="hidden sm:table-cell">{item.number}</td> */}
-                                    <td>{numberFormat.format(item.loan)} {item.currency}</td>
-                                    <td className="hidden sm:table-cell">{getUsertime(new Date(item.timestamp))}</td>
-                                </tr>
-                            )
-                        })
+      <div className="h-screen-list overflow-auto">
+        <table className="mt-4">
+          <thead>
+            <tr className="">
+              <th>№</th>
+              <th>Ismi</th>
+              {/* <th className="hidden sm:table-cell">Tel nomer</th> */}
+              <th>Summa</th>
+              <th className="hidden sm:table-cell">Qaytarish sanasi</th>
+              <th>Qolgan kun</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data
+              .filter((item) => {
+                if (search === "") {
+                  return item;
+                } else if (
+                  item.name.toLowerCase().includes(search.toLowerCase())
+                ) {
+                  return item;
+                }
+              })
+              .map((item, index) => {
+                const time = new Date(item.timestamp).getDate();
+                const end = new Date(item.returnTime).getDate();
+                const result = end - time;
+                return (
+                  <tr
+                    key={item.id}
+                    onClick={() => handleNavigate(item)}
+                    className={
+                      item.status === "Olindi"
+                        ? "bg-emerald-100 text-emerald-900 hover:bg-emerald-700 active:bg-slate-900"
+                        : "bg-red-100 text-red-900 hover:bg-rose-900 active:bg-slate-900"
                     }
+                  >
+                    <td className="w-6 text-center">{index + 1}</td>
+                    <td>{item.name}</td>
+                    <td>
+                      {numberFormat.format(item.loan)} {item.currency}
+                    </td>
+                    <td className="hidden sm:table-cell">
+                      {getUsertime(new Date(item.returnTime))}
+                    </td>
+                    <td>
+                      {result + "  kun"} {result <= 0 ? "o'tdi" : "qoldi"}
+                    </td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </table>
+      </div>
 
-                    </tbody>
+      <div className="p-2 block sm:hidden bg-gray-700 w-full h-[154px] fixed left-0 bottom-0">
+        <div className="flex justify-between w-full gap-2">
+          <div className="p-2 bg-emerald-100 text-center text-emerald-900 border-emerald-900 border hover:bg-emerald-900 hover:text-white transition-all rounded w-1/2">
+            <p>Olingan qarz</p>
+            <h4 className="text-sm">
+              (UZS): <b>{TotalMinus} so'm</b>
+            </h4>
+            <h4 className="text-sm">
+              (USD): <b>{TotalLoanUzs} $</b>
+            </h4>
+          </div>
 
-                </table>
-            </div>
-
-            <div className="fixed bottom-0 bg-gray-200 left-0 px-4 py-2 w-full flex justify-between sm:hidden">
-                <div>
-                    <h4 className="text-md">Total debt (UZS): <b>{TotalLoanUzs} so`m</b></h4>
-                    <h4 className="text-md">Total debt (USD): <b>{TotalLoanUsd} $</b></h4>
-                </div>
-                <button className="btn btn-primary w-12 h-12 text-2xl" onClick={() => setShowAddLoan(true)}>+</button>
-            </div>
-
-            <div className="hidden sm:block p-4 mt-[-4px] text-right">
-                <h4 className="text-xl">Total debt (UZS): <b>{TotalLoanUzs} so`m</b></h4>
-                <h4 className="text-xl">Total debt (USD): <b>{TotalLoanUsd} $</b></h4>
-            </div>
-            
-            {showAddLoan && (
-                <div className="fixed top-0 left-0 bg-gray-50 shadow-xl">
-                    <AddLoan />
-                    <div className="flex w-full justify-center px-4 py-2">
-                        <button className="btn btn-outline-dark text-sm font-semibold w-full" onClick={() => setShowAddLoan(false)}>Close</button>
-                    </div>
-            </div>
-            )}
-            
-
+          <div className="p-2 text-center bg-rose-100 border-rose-900 border text-rose-900 hover:bg-rose-900 hover:text-white transition-all rounded w-1/2">
+            <p>Berilgan qarz</p>
+            <h4 className="text-sm">
+              (UZS): <b>{TotalPlus} so'm</b>
+            </h4>
+            <h4 className="text-sm">
+              (USD): <b>{TotalLoanUsd} $</b>
+            </h4>
+          </div>
         </div>
-        
-    )
+        <button
+          className="btn btn-primary w-full h-12 text-base mt-2"
+          onClick={() => setShowAddLoan(true)}
+        >
+          Yangi qarz qo'shish
+        </button>
+      </div>
+
+      <div className="flex justify-between w-full gap-2">
+        <div className="hidden sm:block p-4 mt-[-4px] text-left bg-emerald-100 text-emerald-900 border-emerald-900 border hover:bg-emerald-900 hover:text-white transition-all rounded-xl w-1/2">
+          <h4 className="text-xl">
+            Olingan qarz (UZS): <b>{TotalMinus} so'm</b>
+          </h4>
+          <h4 className="text-xl">
+            Olingan qarz (USD): <b>{TotalLoanUzs} $</b>
+          </h4>
+        </div>
+
+        <div className="hidden sm:block p-4 mt-[-4px] text-right bg-rose-100 border-rose-900 border text-rose-900 hover:bg-rose-900 hover:text-white transition-all rounded-xl w-1/2">
+          <h4 className="text-xl">
+            Berilgan qarz (UZS): <b>{TotalPlus} so'm</b>
+          </h4>
+          <h4 className="text-xl">
+            Berilgan qarz (USD): <b>{TotalLoanUsd} $</b>
+          </h4>
+        </div>
+      </div>
+
+      {showAddLoan && (
+        <div className="overlay bg-gray-900/80 h-screen fixed top-0 left-0 w-full flex justify-center items-center">
+          <div className="bg-gray-50 shadow-xl rounded-xl mx-4 modalAnimation">
+            <AddLoan />
+            <div className="flex w-full justify-center px-4 pb-4">
+              <button
+                className="btn btn-outline-dark text-sm font-semibold w-full"
+                onClick={() => setShowAddLoan(false)}
+              >
+                Bekor qilish
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
